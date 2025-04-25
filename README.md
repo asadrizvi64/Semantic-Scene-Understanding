@@ -88,7 +88,7 @@ response = query_scene(
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/narrative-scene-understanding.git
+git clone https://github.com/asadrizvi64/narrative-scene-understanding.git
 cd narrative-scene-understanding
 
 # Create a virtual environment
