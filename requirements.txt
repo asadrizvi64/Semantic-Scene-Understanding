@@ -1,0 +1,36 @@
+# Core dependencies
+numpy>=1.20.0
+opencv-python>=4.5.0
+torch>=1.9.0
+ffmpeg-python>=0.2.0
+networkx>=2.6.0
+matplotlib>=3.4.0
+pillow>=8.0.0
+tqdm>=4.60.0
+soundfile>=0.10.0
+
+# Vision processing
+segment-anything>=1.0  # Comment this out if using YOLOv5 fallback instead
+transformers>=4.18.0  # For BLIP-2 and other models
+deep-sort-realtime>=1.3.0  # Optional: comment out if not needed
+insightface>=0.6.0  # Optional: comment out if not needed
+
+# Audio processing
+whisper>=0.0.1  # OpenAI's Whisper model
+pyannote-audio>=2.0.0  # Optional: for speaker diarization
+
+# OCR processing
+easyocr>=1.6.0  # Optional: fallback to pytesseract if unavailable
+pytesseract>=0.3.0  # Optional: fallback OCR
+
+# LLM integration
+openai>=1.0.0  # For OpenAI API access
+llama-cpp-python>=0.1.0  # Optional: for local Llama model inference
+
+# Visualization
+pygraphviz>=1.7  # Optional: for knowledge graph visualization
+
+# Development tools
+pytest>=6.0.0
+black>=21.0.0
+flake8>=3.9.0

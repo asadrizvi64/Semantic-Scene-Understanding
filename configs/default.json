@@ -1,0 +1,60 @@
+{
+    "device": "cuda",
+    "output_dir": "output",
+    "frame_rate": 2.0,
+    "adaptive_sampling": true,
+    "max_frames": 500,
+    "min_confidence": 0.5,
+    "min_text_size": 10,
+    "ocr_frequency": 5,
+    "spatial_distance_threshold": 50,
+    "face_similarity_threshold": 0.6,
+    "description_similarity_threshold": 0.8,
+    "causal_window": 2.0,
+    "model_paths": {
+        "sam": "models/sam_vit_h_4b8939.pth",
+        "whisper": "base",
+        "face_recognition": "models/insightface_model",
+        "ocr": "models/easyocr_model",
+        "llm": "models/llama-7b-chat.gguf"
+    },
+    "vision": {
+        "enable_sam": true,
+        "enable_yolo_fallback": true,
+        "enable_blip": true,
+        "enable_face_recognition": true,
+        "enable_tracking": true,
+        "min_object_size": 20,
+        "person_detection_threshold": 0.7,
+        "object_detection_threshold": 0.5
+    },
+    "audio": {
+        "enable_whisper": true,
+        "enable_diarization": true,
+        "enable_audio_classification": true,
+        "speech_confidence_threshold": 0.6
+    },
+    "ocr": {
+        "engine": "easyocr",
+        "fallback_engine": "tesseract",
+        "confidence_threshold": 0.5,
+        "text_tracking": true,
+        "min_text_occurrences": 2
+    },
+    "knowledge_graph": {
+        "enable_entity_resolution": true,
+        "enable_relationship_inference": true,
+        "enable_causal_inference": true,
+        "enable_goal_inference": true,
+        "enable_emotional_response_inference": true,
+        "causal_probability_threshold": 0.5,
+        "goal_evidence_threshold": 2
+    },
+    "query_engine": {
+        "model": "llama-7b-chat",
+        "temperature": 0.2,
+        "max_tokens": 1024,
+        "use_openai_fallback": true,
+        "openai_model": "gpt-4o"
+    }
+}

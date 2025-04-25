@@ -1,0 +1,80 @@
+{
+  "video_path": "examples/videos/movie_scene.mp4",
+  "analysis_time": "2025-04-20T14:30:22",
+  "processing_time": 245.8,
+  "summary": "This scene takes place in a living room. The scene involves Character A and Character B. Character A enters the room looking concerned and sits down. Character B notices their expression and asks what's wrong. Character A reveals important information, causing Character B to appear surprised. Their conversation becomes increasingly emotional, with Character A showing signs of distress and Character B transitioning from surprise to concern. The scene explores themes of revelation, trust, and emotional vulnerability.",
+  "characters": {
+    "character_1": {
+      "name": "Character A",
+      "description": "Middle-aged person wearing casual clothing",
+      "emotions": [
+        {"emotion": "concerned", "timestamp": 2.5, "intensity": 0.7},
+        {"emotion": "nervous", "timestamp": 15.3, "intensity": 0.8},
+        {"emotion": "distressed", "timestamp": 45.2, "intensity": 0.9}
+      ],
+      "actions": [
+        {"action": "enters room", "timestamp": 1.2},
+        {"action": "sits down", "timestamp": 5.8},
+        {"action": "gestures emphatically", "timestamp": 32.4}
+      ],
+      "arc": {
+        "type": "negative",
+        "start_state": "concerned",
+        "end_state": "distressed"
+      }
+    },
+    "character_2": {
+      "name": "Character B",
+      "description": "Younger person in business attire",
+      "emotions": [
+        {"emotion": "neutral", "timestamp": 3.2, "intensity": 0.5},
+        {"emotion": "surprised", "timestamp": 18.7, "intensity": 0.8},
+        {"emotion": "concerned", "timestamp": 40.1, "intensity": 0.7}
+      ],
+      "actions": [
+        {"action": "looks up", "timestamp": 2.9},
+        {"action": "leans forward", "timestamp": 17.5},
+        {"action": "puts hand on Character A's shoulder", "timestamp": 42.3}
+      ],
+      "arc": {
+        "type": "reactive",
+        "start_state": "neutral",
+        "end_state": "concerned"
+      }
+    }
+  },
+  "dialogue": [
+    {"speaker": "character_2", "text": "Hey, is everything okay?", "start": 7.2, "end": 8.9, "sentiment": 0.2},
+    {"speaker": "character_1", "text": "I need to tell you something important.", "start": 11.5, "end": 14.0, "sentiment": -0.3},
+    {"speaker": "character_2", "text": "What is it?", "start": 15.2, "end": 16.0, "sentiment": 0.0},
+    {"speaker": "character_1", "text": "I've discovered something that changes everything.", "start": 18.5, "end": 22.0, "sentiment": -0.4},
+    {"speaker": "character_2", "text": "What do you mean? How?", "start": 24.7, "end": 26.1, "sentiment": -0.2}
+  ],
+  "key_events": [
+    {"type": "action", "description": "Character A enters room", "timestamp": 1.2, "importance": 3},
+    {"type": "emotion", "character": "character_1", "emotion": "nervous", "timestamp": 15.3, "importance": 4},
+    {"type": "emotion", "character": "character_2", "emotion": "surprised", "timestamp": 18.7, "importance": 5},
+    {"type": "action", "description": "Character B puts hand on Character A's shoulder", "timestamp": 42.3, "importance": 4}
+  ],
+  "themes": [
+    {"name": "revelation", "confidence": 0.85},
+    {"name": "trust", "confidence": 0.72},
+    {"name": "emotional vulnerability", "confidence": 0.68}
+  ],
+  "causal_chains": [
+    {
+      "events": [
+        {"type": "speech", "text": "I need to tell you something important.", "speaker": "character_1"},
+        {"type": "emotion", "emotion": "surprised", "character": "character_2"}
+      ],
+      "confidence": 0.78
+    }
+  ],
+  "query_examples": [
+    {
+      "question": "Why does Character B appear surprised?",
+      "answer": "Character B appears surprised in response to Character A's revelation that they've 'discovered something that changes everything.' This statement carries significant emotional weight and implies a dramatic shift in circumstances, which naturally triggers Character B's surprise. The surprise is also intensified by Character A's nervous demeanor leading up to this revelation, creating anticipation and tension.",
+      "evidence": ["dialogue at 18.5s", "Character A's nervous emotional state", "causal relationship between revelation and surprise"]
+    }
+  ]
+}

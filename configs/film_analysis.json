@@ -1,0 +1,54 @@
+{
+    "description": "Configuration optimized for film and media narrative analysis",
+    "frame_rate": 4.0,
+    "adaptive_sampling": true,
+    "max_frames": 1000,
+    "min_confidence": 0.4,
+    "spatial_distance_threshold": 60,
+    "face_similarity_threshold": 0.7,
+    "causal_window": 3.0,
+    "vision": {
+        "enable_sam": true,
+        "enable_blip": true,
+        "enable_face_recognition": true,
+        "person_detection_threshold": 0.6,
+        "object_detection_threshold": 0.4
+    },
+    "audio": {
+        "enable_whisper": true,
+        "enable_diarization": true,
+        "enable_audio_classification": true,
+        "speech_confidence_threshold": 0.5,
+        "whisper_model": "small"
+    },
+    "ocr": {
+        "engine": "easyocr",
+        "enable": true,
+        "confidence_threshold": 0.4,
+        "text_tracking": true
+    },
+    "knowledge_graph": {
+        "enable_entity_resolution": true,
+        "enable_relationship_inference": true,
+        "enable_causal_inference": true,
+        "enable_goal_inference": true,
+        "enable_emotional_response_inference": true,
+        "causal_probability_threshold": 0.4,
+        "goal_evidence_threshold": 2
+    },
+    "query_engine": {
+        "model": "llama-7b-chat",
+        "temperature": 0.3,
+        "max_tokens": 1024,
+        "film_specific_prompting": true
+    },
+    "analysis": {
+        "character_focus": true,
+        "track_cinematography": true,
+        "analyze_scene_composition": true,
+        "detect_montage": true,
+        "identify_film_techniques": true,
+        "emotional_arc_prominence": 1.2,
+        "dialog_analysis_depth": "deep"
+    }
+}

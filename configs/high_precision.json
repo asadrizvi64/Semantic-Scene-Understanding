@@ -1,0 +1,65 @@
+{
+    "description": "Configuration optimized for high precision analysis (slower but more accurate)",
+    "frame_rate": 8.0,
+    "adaptive_sampling": true,
+    "max_frames": 3000,
+    "min_confidence": 0.7,
+    "spatial_distance_threshold": 30,
+    "face_similarity_threshold": 0.9,
+    "description_similarity_threshold": 0.9,
+    "causal_window": 1.0,
+    "model_paths": {
+        "sam": "models/sam_vit_h_4b8939.pth",
+        "whisper": "medium",
+        "face_recognition": "models/insightface_model",
+        "ocr": "models/easyocr_model",
+        "llm": "models/llama-70b-chat.gguf"
+    },
+    "vision": {
+        "enable_sam": true,
+        "enable_yolo_fallback": true,
+        "enable_blip": true,
+        "enable_face_recognition": true,
+        "enable_tracking": true,
+        "min_object_size": 10,
+        "person_detection_threshold": 0.85,
+        "object_detection_threshold": 0.8
+    },
+    "audio": {
+        "enable_whisper": true,
+        "enable_diarization": true,
+        "enable_audio_classification": true,
+        "speech_confidence_threshold": 0.8,
+        "whisper_model": "medium"
+    },
+    "ocr": {
+        "engine": "easyocr",
+        "fallback_engine": "tesseract",
+        "confidence_threshold": 0.7,
+        "text_tracking": true,
+        "min_text_occurrences": 1
+    },
+    "knowledge_graph": {
+        "enable_entity_resolution": true,
+        "enable_relationship_inference": true,
+        "enable_causal_inference": true,
+        "enable_goal_inference": true,
+        "enable_emotional_response_inference": true,
+        "causal_probability_threshold": 0.7,
+        "goal_evidence_threshold": 3
+    },
+    "query_engine": {
+        "model": "llama-70b-chat",
+        "temperature": 0.1,
+        "max_tokens": 2048,
+        "use_openai_fallback": true,
+        "openai_model": "gpt-4o"
+    },
+    "analysis": {
+        "deep_character_analysis": true,
+        "detailed_scene_composition": true,
+        "fine_grained_emotion_detection": true,
+        "comprehensive_causal_analysis": true,
+        "multi_perspective_interpretation": true
+    }
+}
