@@ -41,7 +41,7 @@ For a quick introduction to using the system, follow these steps:
 
 1. Install the system:
     ```bash
-    git clone https://github.com/yourusername/narrative-scene-understanding.git
+    git clone https://github.com/asadrizvi64/narrative-scene-understanding.git
     cd narrative-scene-understanding
     sudo bash scripts/install_dependencies.sh
     pip install -e .
