@@ -9,6 +9,7 @@ import networkx as nx
 import logging
 import re
 import json
+import requests
 from typing import Dict, List, Tuple, Any, Optional, Set
 from dataclasses import dataclass
 
@@ -58,11 +59,49 @@ class SceneQueryEngine:
         """Initialize the LLM client."""
         self.logger.info(f"Initializing LLM client with model: {self.model_name}")
         
-        # Check if model name contains specific providers
-        if "llama" in self.model_name.lower():
-            self._init_llama_client()
-        else:
-            self._init_openai_client()
+        # Try Ollama first
+        try:
+            self._init_ollama_client()
+        except Exception as e:
+            self.logger.warning(f"Failed to initialize Ollama client: {e}")
+            
+            # Check if model name contains specific providers
+            if "llama" in self.model_name.lower():
+                self._init_llama_client()
+            else:
+                self._init_openai_client()
+    
+    def _init_ollama_client(self):
+        """Initialize an Ollama client for local LLM."""
+        try:
+            # Check if Ollama is running
+            response = requests.get("http://localhost:11434/api/tags")
+            if response.status_code == 200:
+                available_models = response.json().get("models", [])
+                ollama_model = "llama3"  # Default model
+                
+                # Check if our preferred model is available
+                model_available = False
+                for model in available_models:
+                    if model["name"] == ollama_model:
+                        model_available = True
+                        break
+                
+                if not model_available:
+                    self.logger.warning(f"Model {ollama_model} not found in Ollama, using available models: {[m['name'] for m in available_models]}")
+                    if available_models:
+                        ollama_model = available_models[0]["name"]
+                
+                self.llm_type = "ollama"
+                self.ollama_model = ollama_model
+                self.ollama_endpoint = "http://localhost:11434/api/generate"
+                self.logger.info(f"Ollama client initialized with model: {ollama_model}")
+                return
+            
+            raise ConnectionError("Ollama server not responding")
+        except Exception as e:
+            self.logger.warning(f"Ollama not available: {str(e)}")
+            raise
     
     def _init_llama_client(self):
         """Initialize a Llama model client."""
@@ -117,7 +156,7 @@ class SceneQueryEngine:
         """
         self.logger.info(f"Processing query: {question}")
         
-        if self.llm is None:
+        if self.llm_type is None:
             return {
                 "answer": "Cannot process query: LLM not available",
                 "reasoning": "",
@@ -449,7 +488,9 @@ Then provide a concise, insightful answer that addresses the question directly.
         
         # Generate response using the appropriate LLM client
         try:
-            if self.llm_type == "llama":
+            if self.llm_type == "ollama":
+                return self._generate_with_ollama(system_prompt, user_prompt)
+            elif self.llm_type == "llama":
                 return self._generate_with_llama(system_prompt, user_prompt)
             else:
                 return self._generate_with_openai(system_prompt, user_prompt)
@@ -457,6 +498,59 @@ Then provide a concise, insightful answer that addresses the question directly.
             self.logger.error(f"Error generating response: {e}")
             return (f"Error generating reasoning: {str(e)}", 
                     f"I encountered an error analyzing this scene: {str(e)}")
+    
+    def _generate_with_ollama(self, system_prompt: str, user_prompt: str) -> Tuple[str, str]:
+        """
+        Generate response with Ollama API.
+        
+        Args:
+            system_prompt: System instruction
+            user_prompt: User query with context
+            
+        Returns:
+            Tuple of (reasoning, answer)
+        """
+        # Format the prompt with system message
+        formatted_prompt = f"{system_prompt}\n\n{user_prompt}"
+        
+        # Send request to Ollama
+        try:
+            response = requests.post(
+                self.ollama_endpoint,
+                json={
+                    "model": self.ollama_model,
+                    "prompt": formatted_prompt,
+                    "stream": False,
+                    "temperature": self.temperature
+                },
+                timeout=60  # Add timeout to prevent hanging
+            )
+            
+            if response.status_code == 200:
+                # Extract response text
+                full_response = response.json().get("response", "")
+                
+                # Split reasoning and answer - assuming the answer is the last paragraph
+                paragraphs = full_response.split('\n\n')
+                
+                if len(paragraphs) > 1:
+                    reasoning = '\n\n'.join(paragraphs[:-1])
+                    answer = paragraphs[-1]
+                else:
+                    # If there's just one paragraph, use it as both reasoning and answer
+                    reasoning = full_response
+                    answer = full_response
+                    
+                return reasoning, answer
+            else:
+                error_msg = f"Ollama API error: {response.status_code} - {response.text}"
+                self.logger.error(error_msg)
+                return error_msg, "Failed to generate an answer from the local model."
+                
+        except Exception as e:
+            error_msg = f"Error communicating with Ollama: {str(e)}"
+            self.logger.error(error_msg)
+            return error_msg, "Error accessing local language model."
     
     def _generate_with_llama(self, system_prompt: str, user_prompt: str) -> Tuple[str, str]:
         """
