@@ -430,6 +430,10 @@ class VisualProcessor:
             
             # Update tracker
             tracks = self.tracker.update_tracks(detections, frame=frame)
+            # Add this check after the above line:
+            if not isinstance(tracks, list) and not hasattr(tracks, '__iter__'):
+                self.logger.error(f"Tracker returned non-iterable result: {tracks}")
+                return []
             
             # Update object track_ids
             for track in tracks:
