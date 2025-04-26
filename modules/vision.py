@@ -282,7 +282,63 @@ class VisualProcessor:
             # Use YOLOv5 as fallback
             objects = self._detect_with_yolo(frame, frame_idx)
         
+        for obj in objects:
+                if obj['type'] in ['car', 'vehicle', 'truck']:
+                    obj['color'] = self._detect_object_color(frame, obj['box'])
+            
         return objects
+
+    def _detect_object_color(self, frame: np.ndarray, box: List[int]) -> str:
+        """Detect the dominant color of an object."""
+        x_min, y_min, x_max, y_max = box
+        
+        # Extract object region
+        obj_region = frame[y_min:y_max, x_min:x_max]
+        
+        # Convert to RGB for better color analysis
+        obj_rgb = cv2.cvtColor(obj_region, cv2.COLOR_BGR2RGB)
+        
+        # Reshape for clustering
+        pixels = obj_rgb.reshape(-1, 3)
+        
+        # Use k-means to find dominant colors
+        n_colors = 5
+        criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 200, 0.1)
+        flags = cv2.KMEANS_RANDOM_CENTERS
+        _, labels, centers = cv2.kmeans(pixels.astype(np.float32), n_colors, None, criteria, 10, flags)
+        
+        # Count labels to find the most dominant color
+        counts = np.bincount(labels.flatten())
+        
+        # Get the dominant color
+        dominant_color = centers[np.argmax(counts)]
+        
+        # Map RGB values to color names
+        color = self._map_rgb_to_color(dominant_color)
+        
+        return color
+
+    def _map_rgb_to_color(self, rgb: np.ndarray) -> str:
+        """Map RGB values to common color names."""
+        # Define color ranges for common colors
+        color_ranges = {
+            'red': [(0, 0, 100), (80, 80, 255)],
+            'blue': [(100, 0, 0), (255, 80, 80)],
+            'green': [(0, 100, 0), (80, 255, 80)],
+            'yellow': [(0, 100, 100), (80, 255, 255)],
+            'black': [(0, 0, 0), (50, 50, 50)],
+            'white': [(200, 200, 200), (255, 255, 255)],
+            'gray': [(50, 50, 50), (200, 200, 200)]
+        }
+        
+        # Check which color range the RGB value falls into
+        for color_name, (lower, upper) in color_ranges.items():
+            lower = np.array(lower)
+            upper = np.array(upper)
+            if np.all(rgb >= lower) and np.all(rgb <= upper):
+                return color_name
+        
+        return 'unknown'
     
     def _detect_with_yolo(self, frame: np.ndarray, frame_idx: int) -> List[Dict]:
         """
@@ -374,15 +430,17 @@ class VisualProcessor:
             self.logger.error(f"Error generating frame caption: {e}")
             return ""
     
-    def _generate_object_caption(self, obj_img: np.ndarray) -> str:
+    def _generate_object_caption(self, obj_img: np.ndarray, obj_type: str = None, color: str = None) -> str:
         """
         Generate a caption for an object region.
         
         Args:
             obj_img: Object image region
+            obj_type: Type of object if known
+            color: Detected color if available
             
         Returns:
-            Caption string
+            Caption string with enhanced description
         """
         if self.caption_model is None or obj_img.size == 0:
             return ""
@@ -396,12 +454,19 @@ class VisualProcessor:
             out = self.caption_model.generate(**inputs, max_length=50)
             caption = self.caption_processor.decode(out[0], skip_special_tokens=True)
             
+            # Enhance caption with detected properties
+            if obj_type and color and obj_type in ['car', 'vehicle', 'truck']:
+                # Check if color is already in caption
+                if color not in caption.lower():
+                    # Add color to caption
+                    caption = caption.replace(obj_type, f"{color} {obj_type}")
+            
             return caption
-        
+            
         except Exception as e:
             self.logger.error(f"Error generating object caption: {e}")
             return ""
-    
+        
     def _track_objects(self, objects: List[Dict], frame: np.ndarray) -> List:
         """
         Track objects across frames.
