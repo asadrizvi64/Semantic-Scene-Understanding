@@ -1,0 +1,37 @@
+# Python cache files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Egg-info files
+*.egg-info/
+
+# Output files (generated at runtime)
+output/
+
+# Audio/Video files
+*.wav
+*.mp3
+*.mp4
+*.avi
+*.mov
+*.mkv
+
+# JSON outputs or logs (optional if you want them ignored)
+*.json
+*.log
+
+# Text summary outputs
+*.txt
+
+# IDE files (optional)
+.idea/
+.vscode/
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# System files
+.DS_Store

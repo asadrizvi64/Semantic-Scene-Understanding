@@ -1,7 +1,0 @@
-[console_scripts]
-narrative-arcs = visualize_character_arcs:main
-narrative-batch = batch_process:main
-narrative-explore = explore_results:main
-narrative-scene = narrative_scene_understanding:main
-narrative-summary = generate_summary_video:main
-narrative-visualize = visualize_graph:main
